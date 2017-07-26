@@ -22,6 +22,16 @@ PersonModel.getAll = function(callback) {
   })
 }
 
+PersonModel.getById = function(data, callback) {
+  bucket.get(data.id, function(error, result) {
+    if(error) {
+      console.log(error)
+      return calback(error, null)
+    }
+    callback(null, result.value)
+  })
+}
+
 PersonModel.save = function(data, callback) {
   var person = {
     name: {
