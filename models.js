@@ -54,5 +54,21 @@ PersonModel.save = function(data, callback) {
 
 function CommentModel() { }
 
+CommentModel.create = function(data, callback) {
+  var comment = {
+    message: data.message,
+    timestamp: (new Date()),
+    type: "comment"
+  }
+  var id = uuid.v4()
+  bucket.insert(id, comment, function(error, result) {
+    if(error) {
+      return calback(error, null)
+    }
+    comment.id = id
+    callback(null, comment)
+  })
+}
+
 module.exports.PersonModel = PersonModel
 module.exports.CommentModel = CommentModel

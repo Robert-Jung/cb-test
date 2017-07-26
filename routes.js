@@ -1,4 +1,5 @@
 const PersonModel = require('./models').PersonModel
+const CommentModel = require('./models').CommentModel
 
 var appRouter = function(app) {
 
@@ -30,8 +31,27 @@ var appRouter = function(app) {
   })
 
   app.post('/comment', (req, res) => {
-
+    CommentModel.create(req.body, function(error, comment) {
+      if(error) {
+        return res.status(400).send(error)
+      }
+      PersonModel.getById(req.body, function(error, person){
+        if(error) {
+          return res.status(400).send(error)
+        }
+        if(!person.comments) {
+          person.comments = []
+        }
+        person.comments.push(comment.id)
+        person.id = req.body.id
+        PersonModel.save(person, function (error, results) {
+          if(error) {
+            return res.status(400).send(error)
+          }
+          res.send(person)
+          })
+      })
+    })
   })
 }
-
 module.exports = appRouter
